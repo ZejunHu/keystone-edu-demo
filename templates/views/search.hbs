@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      Search Results
+    </div>
+    <div class="panel-body">
+      <p>{{ data.keywords }} search reults</p>
+    </div>
+
+    <table class="table table-striped">
+      <div class="container">
+        {{#if data.invalid}}{{ data.invalid }}{{/if}}
+        {{# each data.results }}
+          <div data-ks-editable="{{#if ../user}}{{adminEditableUrl ../../user _id}}{{/if}}" class="post">
+            <h2><a href="{{postUrl slug}}">{{{title}}}</a></h2>
+            {{#if image}}<img src="{{{cloudinaryUrl image width=160 height=160 crop='fit' }}}" class="img">{{/if}}
+            <p>{{{content.brief}}}</p>
+            {{#if content.extended}}<p class="read-more"><a href="{{postUrl slug}}">Read more...</a></p>{{/if}}
+          </div>
+        {{/each}}
+      </div>
+    </table>
+  </div>
+</div>
