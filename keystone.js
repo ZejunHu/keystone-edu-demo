@@ -31,9 +31,15 @@ keystone.init({
 	"auto update": true,
 	session: true,
 	auth: true,
-	"user model": "User"
+	"user model": "User",
 
 	// "wysiwyg images": true,
+	"wysiwyg cloudinary images": true,
+	"wysiwyg additional plugins": "paste",
+	"wysiwyg additional options": {
+		paste_data_images: true,
+		external_plugins: { uploadimage: "/js/uploadimage/plugin.min.js" }
+	}
 	// "wysiwyg cloudinary images": true
 	// "wysiwyg additional plugins": "images",
 	// "wysiwyg additional buttons": "images"
