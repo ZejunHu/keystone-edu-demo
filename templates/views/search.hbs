@@ -1,21 +1,33 @@
+<!-- Page Header -->
+<header class="masthead" style="background-image: url('/images/search.jpg')">
+	<div class="overlay"></div>
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 col-md-10 mx-auto">
+				<div class="site-heading">
+					<h1>Search Results</h1>
+          {{#if data.invalid}}<h2 class="subheading">No Results! Maybe change a keyword and search again</h2>
+					{{else}}<span class="subheading">search results for <strong>{{data.keywords}}</strong></span>{{/if}}
+				</div>
+			</div>
+		</div>
+	</div>
+</header>
+
 <div class="container">
   <div class="panel panel-primary">
-    <div class="panel-heading">
-      Search Results
-    </div>
-    <div class="panel-body">
-      <p>{{ data.keywords }} search reults</p>
-    </div>
 
     <table class="table table-striped">
       <div class="container">
-        {{#if data.invalid}}{{ data.invalid }}{{/if}}
+        <div class="mb-5">
+          {{#if data.results}}<h4 class="text-weight-normal">Showing {{ data.results.length}} post</h4>{{/if}}
+        </div>
         {{# each data.results }}
           <div data-ks-editable="{{#if ../user}}{{adminEditableUrl ../../user _id}}{{/if}}" class="post">
-            <h2><a href="{{postUrl slug}}">{{{title}}}</a></h2>
-            {{#if image}}<img src="{{{cloudinaryUrl image width=160 height=160 crop='fit' }}}" class="img">{{/if}}
+            <h2><a class="text-info" href="{{postUrl slug}}">{{{title}}}</a></h2>
             <p>{{{content.brief}}}</p>
-            {{#if content.extended}}<p class="read-more"><a href="{{postUrl slug}}">Read more...</a></p>{{/if}}
+            {{#if content.extended}}<button class="btn btn-primary rounded"><a class="text-white" href="{{postUrl slug}}">Read more</a></button>{{/if}}
+  					<hr>
           </div>
         {{/each}}
       </div>

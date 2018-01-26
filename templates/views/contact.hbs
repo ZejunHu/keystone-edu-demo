@@ -1,9 +1,21 @@
-<div class="container">
-	<h1>Contact Us</h1>
-</div>
+<!-- Page Header -->
+<header class="masthead" style="background-image: url('/images/contact.jpg')">
+	<div class="overlay"></div>
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 col-md-10 mx-auto">
+				<div class="site-heading">
+					<h1>Contact Us</h1>
+					<span class="subheading">Have any questions? Let us help!</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>
+
 <div class="container">
 	<div class="row">
-		<div class="col-sm-8 col-md-6">
+		<div class="col-lg-8 col-md-10 mx-auto">
 			{{#if enquirySubmitted}}
 			<h3>Thanks for getting in touch.</h3>
 			{{else}}
@@ -35,7 +47,7 @@
 					<textarea name="message" placeholder="Leave us a message..." rows="4" class="form-control">{{formData.message}}</textarea>
 				</div>
 				<div class="form-actions">
-					<button type="submit" class="btn btn-primary">Send</button>
+					<button type="submit" class="btn btn-primary rounded">Send</button>
 				</div>
 			</form>
 			{{/if}}
