@@ -1,16 +1,15 @@
-var moment = require('moment');
-var _ = require('lodash');
-var hbs = require('handlebars');
-var keystone = require('keystone');
-var cloudinary = require('cloudinary');
+var moment = require("moment");
+var _ = require("lodash");
+var hbs = require("handlebars");
+var keystone = require("keystone");
+var cloudinary = require("cloudinary");
 
 // Collection of templates to interpolate
 var linkTemplate = _.template('<a href="<%= url %>"><%= text %></a>');
 var scriptTemplate = _.template('<script src="<%= src %>"></script>');
 var cssLinkTemplate = _.template('<link href="<%= href %>" rel="stylesheet">');
 
-module.exports = function () {
-
+module.exports = function() {
 	var _helpers = {};
 
 	/**
@@ -20,8 +19,9 @@ module.exports = function () {
 
 	// standard hbs equality check, pass in two values from template
 	// {{#ifeq keyToCheck data.myKey}} [requires an else blockin template regardless]
-	_helpers.ifeq = function (a, b, options) {
-		if (a == b) { // eslint-disable-line eqeqeq
+	_helpers.ifeq = function(a, b, options) {
+		if (a == b) {
+			// eslint-disable-line eqeqeq
 			return options.fn(this);
 		} else {
 			return options.inverse(this);
@@ -49,8 +49,8 @@ module.exports = function () {
 	// Options is the formatting and context check this.publishedDate
 	// If it exists then it is formated, otherwise current timestamp returned
 
-	_helpers.date = function (context, options) {
-		if (!options && context.hasOwnProperty('hash')) {
+	_helpers.date = function(context, options) {
+		if (!options && context.hasOwnProperty("hash")) {
 			options = context;
 			context = undefined;
 
@@ -62,7 +62,7 @@ module.exports = function () {
 		// ensure that context is undefined, not null, as that can cause errors
 		context = context === null ? undefined : context;
 
-		var f = options.hash.format || 'MMM Do, YYYY';
+		var f = options.hash.format || "MMM Do, YYYY";
 		var timeago = options.hash.timeago;
 		var date;
 
@@ -88,21 +88,26 @@ module.exports = function () {
 	// input. categories:['tech', 'js']
 	// output. 'Filed Undder <a href="blog/tech">tech</a>, <a href="blog/js">js</a>'
 
-	_helpers.categoryList = function (categories, options) {
-		var autolink = _.isString(options.hash.autolink) && options.hash.autolink === 'false' ? false : true;
-		var separator = _.isString(options.hash.separator) ? options.hash.separator : ', ';
-		var prefix = _.isString(options.hash.prefix) ? options.hash.prefix : '';
-		var suffix = _.isString(options.hash.suffix) ? options.hash.suffix : '';
-		var output = '';
+	_helpers.categoryList = function(categories, options) {
+		var autolink =
+			_.isString(options.hash.autolink) && options.hash.autolink === "false"
+				? false
+				: true;
+		var separator = _.isString(options.hash.separator)
+			? options.hash.separator
+			: ", ";
+		var prefix = _.isString(options.hash.prefix) ? options.hash.prefix : "";
+		var suffix = _.isString(options.hash.suffix) ? options.hash.suffix : "";
+		var output = "";
 
-		function createTagList (tags) {
-			var tagNames = _.map(tags, 'name');
+		function createTagList(tags) {
+			var tagNames = _.map(tags, "name");
 
 			if (autolink) {
-				return _.map(tags, function (tag) {
+				return _.map(tags, function(tag) {
 					return linkTemplate({
-						url: ('/blog/' + tag.key),
-						text: _.escape(tag.name),
+						url: "/blog/" + tag.key,
+						text: _.escape(tag.name)
 					});
 				}).join(separator);
 			}
@@ -121,32 +126,32 @@ module.exports = function () {
 	 */
 
 	// block rendering for keystone admin css
-	_helpers.isAdminEditorCSS = function (user, options) {
-		var output = '';
-		if (typeof (user) !== 'undefined' && user.isAdmin) {
+	_helpers.isAdminEditorCSS = function(user, options) {
+		var output = "";
+		if (typeof user !== "undefined" && user.isAdmin) {
 			output = cssLinkTemplate({
-				href: '/keystone/styles/content/editor.min.css',
+				href: "/keystone/styles/content/editor.min.css"
 			});
 		}
 		return new hbs.SafeString(output);
 	};
 
 	// block rendering for keystone admin js
-	_helpers.isAdminEditorJS = function (user, options) {
-		var output = '';
-		if (typeof (user) !== 'undefined' && user.isAdmin) {
+	_helpers.isAdminEditorJS = function(user, options) {
+		var output = "";
+		if (typeof user !== "undefined" && user.isAdmin) {
 			output = scriptTemplate({
-				src: '/keystone/js/content/editor.js',
+				src: "/keystone/js/content/editor.js"
 			});
 		}
 		return new hbs.SafeString(output);
 	};
 
 	// Used to generate the link for the admin edit post button
-	_helpers.adminEditableUrl = function (user, options) {
+	_helpers.adminEditableUrl = function(user, options) {
 		var rtn = keystone.app.locals.editable(user, {
-			list: 'Post',
-			id: options,
+			list: "Post",
+			id: options
 		});
 		return rtn;
 	};
@@ -161,12 +166,11 @@ module.exports = function () {
 	//
 	// Returns an src-string for a cloudinary image
 
-	_helpers.cloudinaryUrl = function (context, options) {
-
+	_helpers.cloudinaryUrl = function(context, options) {
 		// if we dont pass in a context and just kwargs
 		// then `this` refers to our default scope block and kwargs
 		// are stored in context.hash
-		if (!options && context.hasOwnProperty('hash')) {
+		if (!options && context.hasOwnProperty("hash")) {
 			// strategy is to place context kwargs into options
 			options = context;
 			// bind our default inherited scope into context
@@ -176,12 +180,11 @@ module.exports = function () {
 		// safe guard to ensure context is never null
 		context = context === null ? undefined : context;
 
-		if ((context) && (context.public_id)) {
-			options.hash.secure = keystone.get('cloudinary secure') || false;
-			var imageName = context.public_id.concat('.', context.format);
+		if (context && context.public_id) {
+			options.hash.secure = keystone.get("cloudinary secure") || false;
+			var imageName = context.public_id.concat(".", context.format);
 			return cloudinary.url(imageName, options.hash);
-		}
-		else {
+		} else {
 			return null;
 		}
 	};
@@ -192,19 +195,19 @@ module.exports = function () {
 	// the routes by keynames to reduce the maintenance of changing urls
 
 	// Direct url link to a specific post
-	_helpers.postUrl = function (postSlug, options) {
-		return ('/blog/post/' + postSlug);
+	_helpers.postUrl = function(postSlug, options) {
+		return "/blog/post/" + postSlug;
 	};
 
 	// might be a ghost helper
 	// used for pagination urls on blog
-	_helpers.pageUrl = function (pageNumber, options) {
-		return '/blog?page=' + pageNumber;
+	_helpers.pageUrl = function(pageNumber, options) {
+		return "/blog?page=" + pageNumber;
 	};
 
 	// create the category url for a blog-category page
-	_helpers.categoryUrl = function (categorySlug, options) {
-		return ('/blog/' + categorySlug);
+	_helpers.categoryUrl = function(categorySlug, options) {
+		return "/blog/" + categorySlug;
 	};
 
 	// ### Pagination Helpers
@@ -215,7 +218,7 @@ module.exports = function () {
 	* expecting the data.posts context or an object literal that has `previous` and `next` properties
 	* ifBlock helpers in hbs - http://stackoverflow.com/questions/8554517/handlerbars-js-using-an-helper-function-in-a-if-statement
 	* */
-	_helpers.ifHasPagination = function (postContext, options) {
+	_helpers.ifHasPagination = function(postContext, options) {
 		// if implementor fails to scope properly or has an empty data set
 		// better to display else block than throw an exception for undefined
 		if (_.isUndefined(postContext)) {
@@ -227,36 +230,46 @@ module.exports = function () {
 		return options.inverse(this);
 	};
 
-	_helpers.paginationNavigation = function (pages, currentPage, totalPages, options) {
-		var html = '';
+	_helpers.paginationNavigation = function(
+		pages,
+		currentPage,
+		totalPages,
+		options
+	) {
+		var html = "";
 
 		// pages should be an array ex.  [1,2,3,4,5,6,7,8,9,10, '....']
 		// '...' will be added by keystone if the pages exceed 10
-		_.each(pages, function (page, ctr) {
+		_.each(pages, function(page, ctr) {
 			// create ref to page, so that '...' is displayed as text even though int value is required
 			var pageText = page;
 			// create boolean flag state if currentPage
-			var isActivePage = ((page === currentPage) ? true : false);
+			var isActivePage = page === currentPage ? true : false;
 			// need an active class indicator
-			var liClass = ((isActivePage) ? ' class="active"' : '');
+			var liClass = isActivePage ? ' class="active"' : "";
 
 			// if '...' is sent from keystone then we need to override the url
-			if (page === '...') {
+			if (page === "...") {
 				// check position of '...' if 0 then return page 1, otherwise use totalPages
-				page = ((ctr) ? totalPages : 1);
+				page = ctr ? totalPages : 1;
 			}
 
 			// get the pageUrl using the integer value
 			var pageUrl = _helpers.pageUrl(page);
 			// wrapup the html
-			html += '<li' + liClass + '>' + linkTemplate({ url: pageUrl, text: pageText }) + '</li>\n';
+			html +=
+				"<li" +
+				liClass +
+				">" +
+				linkTemplate({ url: pageUrl, text: pageText }) +
+				"</li>\n";
 		});
 		return html;
 	};
 
 	// special helper to ensure that we always have a valid page url set even if
 	// the link is disabled, will default to page 1
-	_helpers.paginationPreviousUrl = function (previousPage, totalPages) {
+	_helpers.paginationPreviousUrl = function(previousPage, totalPages) {
 		if (previousPage === false) {
 			previousPage = 1;
 		}
@@ -265,13 +278,12 @@ module.exports = function () {
 
 	// special helper to ensure that we always have a valid next page url set
 	// even if the link is disabled, will default to totalPages
-	_helpers.paginationNextUrl = function (nextPage, totalPages) {
+	_helpers.paginationNextUrl = function(nextPage, totalPages) {
 		if (nextPage === false) {
 			nextPage = totalPages;
 		}
 		return _helpers.pageUrl(nextPage);
 	};
-
 
 	//  ### Flash Message Helper
 	//  KeystoneJS supports a message interface for information/errors to be passed from server
@@ -288,29 +300,27 @@ module.exports = function () {
 	//      </div>
 	//   {{/if}}`
 
-	_helpers.flashMessages = function (messages) {
-		var output = '';
+	_helpers.flashMessages = function(messages) {
+		var output = "";
 		for (var i = 0; i < messages.length; i++) {
-
 			if (messages[i].title) {
-				output += '<h4>' + messages[i].title + '</h4>';
+				output += "<h4>" + messages[i].title + "</h4>";
 			}
 
 			if (messages[i].detail) {
-				output += '<p>' + messages[i].detail + '</p>';
+				output += "<p>" + messages[i].detail + "</p>";
 			}
 
 			if (messages[i].list) {
-				output += '<ul>';
+				output += "<ul>";
 				for (var ctr = 0; ctr < messages[i].list.length; ctr++) {
-					output += '<li>' + messages[i].list[ctr] + '</li>';
+					output += "<li>" + messages[i].list[ctr] + "</li>";
 				}
-				output += '</ul>';
+				output += "</ul>";
 			}
 		}
 		return new hbs.SafeString(output);
 	};
-
 
 	//  ### underscoreMethod call + format helper
 	//	Calls to the passed in underscore method of the object (Keystone Model)
@@ -322,8 +332,34 @@ module.exports = function () {
 	//  *Usage example:*
 	//  `{{underscoreFormat enquiry 'enquiryType'}}
 
-	_helpers.underscoreFormat = function (obj, underscoreMethod) {
+	_helpers.underscoreFormat = function(obj, underscoreMethod) {
 		return obj._[underscoreMethod].format();
+	};
+
+	//////////////////////////////////////////////////// my own helper
+	_helpers.logsth = function(sth) {
+		console.log(sth);
+		return;
+	};
+
+	_helpers.matchCategory = function(categories, id) {
+		//console.log(categories[0], id[0]);
+
+		var cateObj = {};
+		for (var i = 0; i < categories.length; i++) {
+			if (categories[i].id == id[0]) {
+				cateObj = categories[i];
+				break;
+			}
+		}
+		//console.log(JSON.stringify(cateObj));
+
+		return cateObj.name;
+	};
+
+	_helpers.formatDate = function(date) {
+		//console.log(date);
+		return date.toDateString();
 	};
 
 	return _helpers;
