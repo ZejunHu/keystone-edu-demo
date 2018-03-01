@@ -5,6 +5,12 @@ body {
   @include serif-font;
 }
 
+hr {
+  max-width: 50px;
+  border-width: 3px;
+  border-color: $primary;
+}
+
 p {
   line-height: 1.5;
   margin: 30px 0;
